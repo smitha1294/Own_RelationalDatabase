@@ -1,0 +1,67 @@
+1. Basic information
+Team number : 31
+#1 Student ID : 57806943
+#1 Student Name : SHEFALI GUPTA
+#2 Student ID : 58328870
+#2 Student Name : SMITHA GURUNATHAKRISHNAN BALAGURUNATAN
+OS (bit) : OSX 10.12.6
+gcc version : 5.4.0
+
+
+2. Catalog information about Index
+- Show your catalog information about an index (tables, columns). 
+
+Added an extra column in Columns table, having name ‘Has-Index’ with Integer data type. Initially. Value for ‘Has-Index’ column is 0 for every attribute of the table. When an index of a particular attribute is created, ‘Has-Index’ entry for that attribute is changed to 1. 
+
+
+3. Block Nested Loop Join (If you have implemented this feature)
+- Describe how your block nested loop join works (especially, how you manage the given buffers.)
+
+Yes.
+For Block nested loop join, we are creating hash map in memory of size numPages*PAGE_SIZE (size of buffer). While creating the hash map in memory, read records from outer relation and add to hash map in memory, with key (as the attribute of condition variable) and value as the record itself.
+We have 3 unordered hash maps, for our implementation, based on attribute type:
+
+	1) typeIntMap (int,void*) , for TypeInt key type
+	2) typeRealMap (float,void*) , for TypeReal key type
+	3) typeVarCharMap (string,void*) , for TypeVarChar type
+While reading outer table, add entries in hash map until hash map size reaches buffer size. Then, use this hash map to iterate over the inner relation. Extract condition attribute value from right record and search for key-value pair in respective hash map. If match found, then join the tuple extracted from hash map (key->value) and the right relation tuple, and return as result. Continue loop until, data in inner relation is exhausted. Again. Now, clear the hash map and start reading outer relation data from where the iterator was left.
+This process continues until we reach the end of both the relations, after which getNextTuple function returns -1.
+
+
+4. Index Nested Loop Join (If you have implemented this feature)
+- Describe how your index nested loop join works.
+
+Yes.
+In Index Nested Loop Join, the relation which has a index on its join column is made the inner loop, while the other relation is taken in the outer loop. First, the relation (left relation in our case) in outer loop is iterated to obtain the left condition attribute’s key. The iterator of right relation (relation in inner loop) is set to this value (left condition attribute key). Then the inner loop iterates the values in right relation from the value set by the outer relation and for every iteration match from getNextTuple, joinTuple is done. So, for every tuple in outer relation, inner relation is iterated and if the entries match, the join happens and the data is returned.The process continues until EOF (-1) of either inner or outer loop relation table reaches.
+
+5. Grace Hash Join (If you have implemented this feature)
+- Describe how your grace hash join works (especially, in-memory structure).
+
+No.
+
+
+6. Aggregation
+- Describe how your aggregation (basic, group-based hash) works.
+
+We have implemented the mandatory basic aggregation. Group-based aggregation has not been implemented.
+First, the attributes of the input table are obtained and and a switch case with the following 5 comparison operator types is implemented. For every case, iteration is done using getNextTuple and the successive keys to be compared is extracted from the tuple by the mentioned attribute name. Then the computation is performed on the keys obtained. 
+1)COUNT - count of number of keys is determined.
+2)SUM - sum of all keys is done.
+3)AVG - average computed as sum/count.
+4)MIN - minimum value of all keys is computed by comparing keys using lesser than condition and swapping the values not.
+5)MAX - maximum value of all keys is computed by comparing keys using greater than condition and swapping the values not.
+
+7. Implementation Detail
+- Have you added your own source file (.cc or .h)?
+No.
+
+- Have you implemented any optional features? Then, describe them here.
+No.
+
+- Other implementation details:
+No.
+
+
+6. Other (optional)
+- Freely use this section to tell us about things that are related to the project 4, but not related to the other sections (optional)
+
